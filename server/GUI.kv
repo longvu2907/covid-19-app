@@ -1,0 +1,27 @@
+#:kivy 2.0.0
+
+<MainView>:
+	name: 'signin'
+	active: active
+	displayList: displayList
+	scrollView: scrollView
+	
+	MDCard:
+		pos_hint: {"center_x": 0.5, "center_y": 0.5}
+		orientation: 'vertical'
+
+		MDBoxLayout:
+			size_hint: 1, .1
+			MDLabel:
+				id: active
+				text: 'ACTIVE CLIENTS: 0'
+				halign: 'center'
+
+		ScrollView:
+			id: scrollView
+			size_hint: 1, .9
+			MDList:
+				id: displayList
+
+
+

@@ -1,0 +1,48 @@
+#:kivy 2.0.0
+
+<MenuScreen>:
+	name: 'menu'
+	MDCard:
+		size_hint: None, None
+		size: 300, 450
+		pos_hint: {"center_x": 0.5, "center_y": 0.5}
+		elevation: 10
+		padding: 50
+		spacing: 25
+		orientation: 'vertical'
+
+		MDLabel:
+			text: 'COVID-19'
+			halign: 'center'
+			font_size: 35
+
+		MyButton:
+			text: 'Global'
+			pos_hint: {'center_x': .5}
+			size_hint_x: 1
+			on_release: 
+				root.manager.current = 'globalStat'
+				root.manager.transition.direction = "left"
+
+		MyButton:
+			text: 'Vietnam'
+			pos_hint: {'center_x': .5}
+			size_hint_x: 1
+			on_release: 
+				root.manager.current = 'vietnamStat'
+				root.manager.transition.direction = "left"
+
+		MyButton:
+			text: 'Sign Out'
+			pos_hint: {'center_x': .5}
+			size_hint_x: 1
+			on_release: 
+				root.manager.current = 'signin'
+				root.manager.transition.direction = "down"
+
+		MyButton:
+			text: 'Quit'
+			pos_hint: {'center_x': .5}
+			size_hint_x: 1
+			on_release: 
+				root.quit()

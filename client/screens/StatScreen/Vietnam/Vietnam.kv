@@ -1,0 +1,53 @@
+#:kivy 2.0.0
+
+<VietnamStat>:
+	name: 'vietnamStat'
+	dataTable: dataTable
+	search: search
+	updateTime: updateTime
+
+	MDCard:
+		pos_hint: {"center_x": 0.5, "center_y": 0.5}
+		orientation: 'vertical'
+		MDBoxLayout:
+			spacing: 20
+			orientation: 'vertical'
+			size_hint: 1, .3
+			padding: [0, 10, 0, 0]
+			MDLabel:
+				text: 'Covid-19 Vietnam Stat'
+				halign: 'center'
+				font_size: 35
+			MDTextField:
+				id: search
+				hint_text: 'Search'
+				text: 'Vietnam'
+				font_size: 20
+				pos_hint: {"center_x": .5, "center_y": .5}
+				size_hint_x: None
+				width: 300
+				write_tab: False
+				on_focus: 
+					if self.focus: root.searchMenu.open()
+					if self.focus: root.resetTextField()
+				on_text: root.filter()
+		MDBoxLayout:
+			id: dataTable
+		MDBoxLayout:	
+			size_hint: 1, .05
+			MDLabel:
+				id: updateTime
+				halign: 'center'
+				font_size: 15
+	
+	AnchorLayout:
+		anchor_x: 'left'
+		anchor_y: 'top'
+		padding: [30, 30, 20, 20]
+
+		MyButton:
+			text: 'Back'
+			on_release: 
+				root.manager.current = 'menu'
+				root.manager.transition.direction = "right"
+				root.reset()

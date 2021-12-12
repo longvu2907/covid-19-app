@@ -1,0 +1,33 @@
+#:kivy 2.0.0
+
+<IPScreen>:
+	name: 'ip'
+	ip: ip
+
+	MDCard:
+		size_hint: None, None
+		size: 350, 300
+		pos_hint: {"center_x": 0.5, "center_y": 0.5}
+		elevation: 25
+		padding: 25
+		spacing: 15
+		orientation: 'vertical'
+
+
+		MDLabel:
+			text: 'Connect To Server'
+			halign: 'center'
+			font_style: 'H4'
+
+		MDTextField:
+			id: ip
+			hint_text: 'Server IP' 
+			font_size: 20
+			width: 200
+			write_tab: False
+			on_text_validate: root.submit()
+		MyButton:
+			text: 'Connect'
+			pos_hint: {'center_x': .5}
+			size_hint_x: 1
+			on_release: root.submit()

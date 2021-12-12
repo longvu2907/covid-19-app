@@ -1,0 +1,56 @@
+#:kivy 2.0.0
+
+<SigninScreen>:
+	name: 'signin'
+	username: username
+	password: password
+	MDCard:
+		size_hint: None, None
+		size: 300, 450
+		pos_hint: {"center_x": 0.5, "center_y": 0.5}
+		elevation: 25
+		padding: 50
+		spacing: 25
+		orientation: 'vertical'
+
+		MDLabel:
+			text: 'Login'
+			halign: 'center'
+			font_style: 'H3'
+
+		MDTextField:
+			id: username
+			hint_text: 'Username'
+			helper_text: 'Enter username'
+			helper_text_mode: 'on_focus' 
+			font_size: 20
+			width: 200
+			write_tab: False
+			on_text_validate: root.submit()
+
+		MDTextField:
+			id: password
+			hint_text: 'Password' 
+			helper_text: 'Enter password'
+			helper_text_mode: 'on_focus'
+			password: True
+			font_size: 20
+			width: 200
+			size_hint_x: None
+			write_tab: False
+			on_text_validate: root.submit()
+
+		MyButton:
+			text: 'Sign In'
+			pos_hint: {'center_x': .5}
+			size_hint_x: 1
+			on_release: root.submit()
+		
+		MyButton:
+			text: 'Signup'
+			pos_hint: {'center_x': .5}
+			size_hint_x: 1
+			on_release: 
+				root.manager.current = 'signup'
+				root.manager.transition.direction = "left"
+				root.reset()
