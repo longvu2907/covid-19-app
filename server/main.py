@@ -10,7 +10,7 @@ import os
 #Config
 HEADER = 64
 PORT = 5050
-SERVERIP = '127.0.0.1'
+SERVER_IP = '127.0.0.1'
 FORMAT = 'utf-8'
 UPDATE_TIME = 3600
 THREAD_INIT = 3
@@ -26,8 +26,9 @@ SUCCESS_MSG = "-SUCCESS"
 #List client
 CLIENTS = []
 
+#create server with SERVER_IP and PORT
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind((SERVERIP, PORT))
+server.bind((SERVER_IP, PORT))
 
 #Get user data
 try:
@@ -59,12 +60,13 @@ def signin(conn, ip, port):
   password = signinData["password"]
 
   if username in userData and password == userData[username]:
-    #send failed message if wrong username
+    #send success message when sign in success
     send(conn, SUCCESS_MSG)
-    ui.mainView.updateList(f"[{ip}:{port}] {SIGNIN_MSG} {SUCCESS_MSG}", 'account', 'green')
+    ui.logScreen.updateList(f"[{ip}:{port}] {SIGNIN_MSG} {SUCCESS_MSG}", 'account', 'green')
   else:
+    #send fail message
     send(conn, FAILED_MSG)
-    ui.mainView.updateList(f"[{ip}:{port}] {SIGNIN_MSG} {FAILED_MSG}", 'account', 'red')
+    ui.logScreen.updateList(f"[{ip}:{port}] {SIGNIN_MSG} {FAILED_MSG}", 'account', 'red')
 
 
 #Handle singout command
@@ -77,7 +79,7 @@ def signup(conn, ip, port):
   if username in userData:
     #send failed message if username exists
     send(conn, FAILED_MSG)
-    ui.mainView.updateList(f"[{ip}:{port}] {SIGNUP_MSG} {FAILED_MSG}", 'account', 'red')
+    ui.logScreen.updateList(f"[{ip}:{port}] {SIGNUP_MSG} {FAILED_MSG}", 'account', 'red')
   else:
     #update userData 
     userData[username] = password
@@ -86,22 +88,31 @@ def signup(conn, ip, port):
 
     #send success message
     send(conn, SUCCESS_MSG)
-    ui.mainView.updateList(f"[{ip}:{port}] {SIGNUP_MSG} {SUCCESS_MSG}", 'account', 'green')
+    ui.logScreen.updateList(f"[{ip}:{port}] {SIGNUP_MSG} {SUCCESS_MSG}", 'account', 'green')
 
 
 #Handle get data command
 def getData(conn, ip, port):
   data = open('./data/covid-data.json', 'r', encoding=FORMAT).read()
   send(conn, data)
-  ui.mainView.updateList(f"[{ip}:{port}] {GETDATA_MSG}", 'account', 'green')
+  ui.logScreen.updateList(f"[{ip}:{port}] {GETDATA_MSG}", 'account', 'green')
 
-
+#handle client
 def handleClient(conn, addr):
+  global CLIENTS
   ip, port = addr
 
-  ui.mainView.updateNumberClients(threading.activeCount() - THREAD_INIT)
-  ui.mainView.updateList(f"[{ip}:{port}] connected.", 'account', 'green')
+  #update client list
+  CLIENTS.append({'conn': conn, 'addr': addr})
 
+  #update client in ui
+  ui.updateListClients(CLIENTS)
+  ui.clientScreen.addClient(addr)
+
+  #update log in ui
+  ui.logScreen.updateList(f"[{ip}:{port}] connected.", 'account', 'green')
+
+  #receive and handle client command
   connected = True
   while connected:
     try:
@@ -118,25 +129,33 @@ def handleClient(conn, addr):
     except:
       connected = False
 
-  ui.mainView.updateNumberClients(threading.activeCount() - THREAD_INIT - 1)
-  ui.mainView.updateList(f"[{ip}:{port}] disconnected.", 'account', 'red')
+  #update log in ui
+  ui.logScreen.updateList(f"[{ip}:{port}] disconnected.", 'account', 'red')
 
-  global CLIENTS
+  #update client list
   CLIENTS = list(filter(lambda i: i['conn'] != conn, CLIENTS))
+
+  #update client in ui
+  ui.updateListClients(CLIENTS)
+  ui.clientScreen.removeClient(addr)
+
   conn.close()
 
+#set interval for update data
 def setInterval(func, time):
   e = threading.Event()
   while not e.wait(time):
     func()
 
+#update data
 def updateData():
   data = getAPIData()
   with open('./data/covid-data.json', 'w', encoding=FORMAT) as f:
     json.dump(data, f, ensure_ascii=False)
 
-  ui.mainView.updateList('Data updated', 'server')
+  ui.logScreen.updateList('Data updated', 'server')
 
+#close server
 def closeServer():
   for client in CLIENTS:
     print(client)
@@ -145,24 +164,37 @@ def closeServer():
   
   os._exit(0)
 
-def start():
+#start server
+def startServer():
+  #update covid data
   updateData()
+
+  #update covid data per UPDATE_TIME (seconds) thread 
   updateDataThread = threading.Thread(target=setInterval, args=(updateData, UPDATE_TIME))
   updateDataThread.start()
 
+  #start server
   server.listen()
-  ui.mainView.updateList(f"Server is listening on [{SERVERIP}:{PORT}]", 'server')
+  ui.logScreen.updateList(f"Server is listening on [{SERVER_IP}:{PORT}]", 'server')
 
   while True:
+    #server accept client connect
     conn, addr = server.accept()
-    CLIENTS.append({'conn': conn, 'addr': addr})
 
+    #handle for each client thread 
     thread = threading.Thread(target=handleClient, args=(conn, addr))
     thread.start() 
 
-serverThread = threading.Thread(target=start)
-serverThread.start()
 
-ui = MainApp()
-Window.bind(on_request_close=lambda _: closeServer())
-ui.run()
+
+if __name__ == '__main__':
+  #server thread
+  serverThread = threading.Thread(target=startServer)
+  serverThread.start()
+
+  #bind closeServer function
+  Window.bind(on_request_close=lambda _: closeServer())
+
+  #start GUI
+  ui = MainApp(closeServer)
+  ui.run()

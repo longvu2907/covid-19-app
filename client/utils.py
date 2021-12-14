@@ -49,8 +49,10 @@ def receive(screenManager):
       screenManager.current = 'ip'
       return None
 
+#receive message thread
 RECEIVE_THREAD = threading.Thread(target=receive, args=(sm,))
 
+#connect to server with ip
 def connectToServer(ip):
   client.connect((ip, PORT))
   RECEIVE_THREAD.start()
@@ -72,6 +74,7 @@ def signin(username, password):
   send(SIGNIN_MSG)
   send(json.dumps({"username":username,"password":password}))
 
+  #delay to update MSG_QUEUE
   sleep(0.1)
 
   if MSG_QUEUE.pop(0) == SUCCESS_MSG:
@@ -87,6 +90,7 @@ def signup(username, password):
   send(SIGNUP_MSG)
   send(json.dumps({"username":username,"password":password}))
 
+  #delay to update MSG_QUEUE
   sleep(0.1)
 
   if MSG_QUEUE.pop(0) == SUCCESS_MSG:
@@ -98,10 +102,14 @@ def signup(username, password):
 def getData():
   send(GETDATA_MSG)
 
+  #delay to update MSG_QUEUE
   sleep(0.1)
 
   return json.loads(MSG_QUEUE.pop(0))
 
 def closeApp():
+  #send disconnect message
   send(DISCONNECT_MSG)
+  
+  #close app
   os._exit(0)

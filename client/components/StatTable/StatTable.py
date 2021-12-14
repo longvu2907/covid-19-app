@@ -9,6 +9,7 @@ Builder.load_file('components/StatTable/StatTable.kv')
 class IconListItem(OneLineIconListItem):
   icon = StringProperty()
 
+#create data table
 def StatTable(type, data):
   return MDDataTable(
     size_hint=(0.5, 1),
@@ -16,6 +17,8 @@ def StatTable(type, data):
     pagination_menu_pos='auto',
     pagination_menu_height=240,
     rows_num=10,
+    
+    #column
     column_data=[
         ("No", 10),
         (type, 30),
@@ -24,6 +27,8 @@ def StatTable(type, data):
         ("[color=#1EFF7C]Recovered[/color]", 30),
         ("[color=#FF0000]Deaths[/color]", 30),
         ],
+
+    #row
     row_data=[
       (index + 1, 
       value,
@@ -39,6 +44,8 @@ def StatTable(type, data):
 
 def SearchMenu(caller, data, setItem, icon):
   items = []
+
+  #create item for each data
   for i in data:
       items.append(
         {
@@ -49,6 +56,8 @@ def SearchMenu(caller, data, setItem, icon):
           "on_release": lambda x=i: setItem(x),
         }
       )
+
+  #create menu with items
   return MDDropdownMenu(
     caller=caller,
     items=items,

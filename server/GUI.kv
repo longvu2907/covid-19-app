@@ -1,10 +1,11 @@
 #:kivy 2.0.0
 
-<MainView>:
-	name: 'signin'
+<LogScreen>:
+	name: 'logList'
 	active: active
 	displayList: displayList
 	scrollView: scrollView
+	closeServerBtn: closeServerBtn
 	
 	MDCard:
 		pos_hint: {"center_x": 0.5, "center_y": 0.5}
@@ -23,5 +24,71 @@
 			MDList:
 				id: displayList
 
+	AnchorLayout:
+		anchor_x: 'left'
+		anchor_y: 'top'
+		padding: [30, 20, 20, 20]
 
+		MyButton:
+			id: closeServerBtn
+			text: 'Close server'
+			on_release:
+				app.closeServer()
 
+	AnchorLayout:
+		anchor_x: 'right'
+		anchor_y: 'top'
+		padding: [30, 20, 20, 20]
+
+		MyButton:
+			id: closeServerBtn
+			text: 'List clients'
+			on_release: 
+				root.manager.current = 'clientList'
+				root.manager.transition.direction = "left"
+
+<ClientScreen>:
+	name: 'clientList'
+	active: active
+	displayList: displayList
+	scrollView: scrollView
+
+	MDCard:
+		pos_hint: {"center_x": 0.5, "center_y": 0.5}
+		orientation: 'vertical'
+
+		MDBoxLayout:
+			size_hint: 1, .1
+			MDLabel:
+				id: active
+				text: 'ACTIVE CLIENTS: 0'
+				halign: 'center'
+
+		ScrollView:
+			id: scrollView
+			size_hint: 1, .9
+			MDList:
+				id: displayList
+
+	AnchorLayout:
+		anchor_x: 'left'
+		anchor_y: 'top'
+		padding: [30, 20, 20, 20]
+
+		MyButton:
+			id: closeServerBtn
+			text: 'Log'
+			on_release: 
+				root.manager.current = 'logList'
+				root.manager.transition.direction = "right"
+
+	AnchorLayout:
+		anchor_x: 'right'
+		anchor_y: 'top'
+		padding: [30, 20, 20, 20]
+
+		MyButton:
+			id: closeServerBtn
+			text: 'Close server'
+			on_release:
+				app.closeServer()

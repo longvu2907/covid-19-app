@@ -1,5 +1,3 @@
-import kivy
-import kivymd
 from kivymd.app import MDApp
 from kivy.config import Config
 from kivy.core.window import Window
