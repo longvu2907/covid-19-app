@@ -55,7 +55,7 @@ def send(conn, msg):
 
 #Handle signin command
 def signin(conn, ip, port):
-  signinData = json.loads(receive(conn))
+  signinData = json.loads(receive(conn))# {"username": "username", "password": "*******"}
   username = signinData["username"]
   password = signinData["password"]
 
@@ -67,7 +67,6 @@ def signin(conn, ip, port):
     #send fail message
     send(conn, FAILED_MSG)
     ui.logScreen.updateList(f"[{ip}:{port}] {SIGNIN_MSG} {FAILED_MSG}", 'account', 'red')
-
 
 #Handle singout command
 def signup(conn, ip, port):
@@ -89,7 +88,6 @@ def signup(conn, ip, port):
     #send success message
     send(conn, SUCCESS_MSG)
     ui.logScreen.updateList(f"[{ip}:{port}] {SIGNUP_MSG} {SUCCESS_MSG}", 'account', 'green')
-
 
 #Handle get data command
 def getData(conn, ip, port):

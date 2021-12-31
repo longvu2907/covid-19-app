@@ -68,7 +68,7 @@ class LogScreen(Screen):
     #create widget
     now = datetime.now().strftime("%H:%M:%S")
     color = {'red':'#FF0000', 'yellow':'#FFFF32', 'green':'#1EFF7C'}[color]
-    newItem =  OneLineIconListItem(text=f'{now}: [color={color}]{text}[/color]')
+    newItem = OneLineIconListItem(text=f'{now}: [color={color}]{text}[/color]')
 
     #add widget to ui
     newItem.add_widget(IconLeftWidget(icon=icon))
