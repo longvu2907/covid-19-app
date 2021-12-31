@@ -16,8 +16,8 @@ class IPScreen(Screen):
   #connect to server
   def connect(self):
     try:
-      self.dialog.open()
       connectToServer(self.ip.text)
+      self.dialog.dismiss()
       self.reset()
       sm.current = 'signin'
       sm.transition.direction = "up"
@@ -32,12 +32,13 @@ class IPScreen(Screen):
     self.dialog = MDDialog(
         text="Connecting...",
       )
+    self.dialog.open()
 
-    #connect to server thread
+    # connect to server thread
     connectingThread = threading.Thread(target=self.connect)
     connectingThread.start()
     
-  #clear state of screen
+  #reset state of screen
   def reset(self):
     self.dialog.dismiss()
     sm.remove_widget(self)

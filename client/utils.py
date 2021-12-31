@@ -34,10 +34,13 @@ def receive(screenManager):
       if messageLength:
           msg = client.recv(int(messageLength)).decode(FORMAT)
           if (msg == DISCONNECT_MSG):
+            #create new connect when disconnect from server
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             MSG_QUEUE.clear()
+            #create new thread to receive msg
             RECEIVE_THREAD = threading.Thread(target=receive, args=(sm,))
 
+            #return to ip screen
             screenManager.current = 'ip'
             return None
           MSG_QUEUE.append(msg)
